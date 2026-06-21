@@ -65,6 +65,19 @@ Needs a browser with **WebGL2** and **WebCodecs** (Chrome / Edge / recent Safari
 
 The fonts bundled in `public/fonts/` are all under the **SIL Open Font License** (free for commercial use and embedding): Bakudai, JasonHW (游清松手寫), GenSen Rounded, Noto Serif TC, LXGW WenKai TC, plus Anton / Archivo Black / Bebas Neue.
 
+## 🐟 Help wanted: more ink creatures
+
+Honestly? This is the part I most want help with.
+
+Right now there's a single ink koi swimming through the fluid. But I dream of a whole bestiary — a flock of ink sparrows, ink butterflies drifting, an ink snake, an ink dragon, an ink jellyfish… anything that can live and move inside the ink.
+
+The catch: **my art skills are, frankly, garbage.** Drawing a decent silhouette is genuine torture for me. So if you can draw — or just write a bit of Canvas 2D — please come make some creatures. It's easy:
+
+- **Easiest path** — add an entry to `BODY_PRESETS` in `app/engine/bodies.ts` with a `draw(ctx, S)` that paints a **black silhouette** of your creature. That's it. The studio stamps it into the ink field and the fluid drags its edges into wispy ink trails automatically. (Copy `drawKoi` / `drawJellyfish` in the same file as a starting point.)
+- **Advanced** — want it to undulate and swim with spine physics, like the koi? See `Marrow` (skeleton) + `InkRenderer` (ink rendering) in `app/inklab/ink-creature.ts`.
+
+You handle the *shape*; the ink engine handles the bleeding, drifting and dissolving. Open a PR with a new creature and you will genuinely make my day 🖤
+
 ## 📄 License
 
 [MIT](./LICENSE) © techtrekleo (九黎月 Jiuliyue)
