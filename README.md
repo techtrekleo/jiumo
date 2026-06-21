@@ -65,18 +65,22 @@ Needs a browser with **WebGL2** and **WebCodecs** (Chrome / Edge / recent Safari
 
 The fonts bundled in `public/fonts/` are all under the **SIL Open Font License** (free for commercial use and embedding): Bakudai, JasonHW (游清松手寫), GenSen Rounded, Noto Serif TC, LXGW WenKai TC, plus Anton / Archivo Black / Bebas Neue.
 
-## 🐟 Help wanted: more ink creatures
+## 🐟 Help wanted: more ink creatures (the *living* kind!)
 
 Honestly? This is the part I most want help with.
 
-Right now there's a single ink koi swimming through the fluid. But I dream of a whole bestiary — a flock of ink sparrows, ink butterflies drifting, an ink snake, an ink dragon, an ink jellyfish… anything that can live and move inside the ink.
+Right now exactly **one** thing is truly alive in the ink — the ink koi. It has a spine that flexes as it swims and tail ribbons that undulate and trail off into the fluid. I dream of a whole bestiary like it: an ink snake, an ink eel, an ink dragon, a flock of ink sparrows, ink butterflies… creatures that genuinely *move* and feel alive — not just a shape drifting around.
 
-The catch: **my art skills are, frankly, garbage.** Drawing a decent silhouette is genuine torture for me. So if you can draw — or just write a bit of Canvas 2D — please come make some creatures. It's easy:
+The catch: **my art skills are, frankly, garbage.** I can build the engine, but I can't design the creatures. So if procedural creature animation excites you, please come make some.
 
-- **Easiest path** — add an entry to `BODY_PRESETS` in `app/engine/bodies.ts` with a `draw(ctx, S)` that paints a **black silhouette** of your creature. That's it. The studio stamps it into the ink field and the fluid drags its edges into wispy ink trails automatically. (Copy `drawKoi` / `drawJellyfish` in the same file as a starting point.)
-- **Advanced** — want it to undulate and swim with spine physics, like the koi? See `Marrow` (skeleton) + `InkRenderer` (ink rendering) in `app/inklab/ink-creature.ts`.
+Where to look:
 
-You handle the *shape*; the ink engine handles the bleeding, drifting and dissolving. Open a PR with a new creature and you will genuinely make my day 🖤
+- `app/inklab/ink-creature.ts` — `Marrow` (skeletal physics: a head-trail spine with traveling-wave undulation + flowing tail ribbons) and `InkRenderer` (turns the skeleton into a bleeding, wispy ink body).
+- `app/inklab/ink-koi-actor.ts` — `InkKoiActor`, the koi itself. **This is your reference.** Copy it, reconfigure the `Marrow` (segment count, length, width profile, tail) and tweak `InkRenderer`, and you've got a snake / eel / dragon / whatever swimming in the ink.
+
+You design how it's built and how it moves; the engine handles the bleeding, drifting and dissolving. Open a PR with a new creature and you will genuinely make my day 🖤
+
+<sub>(There's also a simpler `BODY_PRESETS` path in `app/engine/bodies.ts` for rigid silhouettes that just drift around as a whole — but those don't come *alive* the way the koi does. The koi-style, articulated creatures are what I'm really after.)</sub>
 
 ## 📄 License
 
