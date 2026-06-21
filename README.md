@@ -1,8 +1,17 @@
 # 九墨 Jiumo · 水墨音樂可視化工作室
 
+![License: MIT](https://img.shields.io/badge/License-MIT-ffd56b.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16-000.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6.svg)
+![PRs welcome](https://img.shields.io/badge/PRs-welcome-2ea44f.svg)
+
 把你的歌變成一幅**會呼吸的水墨**。九墨是一個在瀏覽器裡跑、純前端的開源音樂可視化工作室 —— 上傳音檔，調墨色、加歌詞、套特效，即時預覽後直接輸出成影片。**免安裝、免帳號、不上傳到任何伺服器**（音檔只在你的瀏覽器裡處理）。
 
 > Turn your music into living ink. A browser-based, client-side music visualizer studio: fluid ink simulation, GPU spectrum shaders, lyric scrolling, cover designer, and frame-accurate video export — all running locally in the browser.
+
+<!-- 截圖 / Demo GIF：建議放一段「載入歌曲後墨在流動」的畫面（最吸睛）。放好後改成：
+![九墨 Studio](docs/screenshot.png) -->
+> 📸 _截圖與 demo GIF 待補 —— 載入一首歌、讓墨流動起來再截最美。_
 
 ---
 
@@ -40,7 +49,11 @@ npm run dev
 
 需要支援 **WebGL2** 與 **WebCodecs** 的瀏覽器（Chrome / Edge / 近期 Safari）。影片輸出需要 WebCodecs（Chromium 系最完整）。
 
-部署：直接丟 [Vercel](https://vercel.com/new) 一鍵部署，或任何能跑 Next.js 的平台。
+### 一鍵部署
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftechtrekleo%2Fjiumo)
+
+或任何能跑 Next.js 的平台（Netlify / Cloudflare Pages / 自架）。純前端、不需要任何環境變數或後端。
 
 ## 🔤 字體
 
