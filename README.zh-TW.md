@@ -11,9 +11,9 @@
 
 > Turn your music into living ink. A browser-based, client-side music visualizer studio: fluid ink simulation, GPU spectrum shaders, lyric scrolling, cover designer, and frame-accurate video export — all running locally in the browser.
 
-<!-- 截圖 / Demo GIF：建議放一段「載入歌曲後墨在流動」的畫面（最吸睛）。放好後改成：
-![九墨 Studio](docs/screenshot.png) -->
-> 📸 _截圖與 demo GIF 待補 —— 載入一首歌、讓墨流動起來再截最美。_
+<p align="center">
+  <img src="docs/demo.gif" alt="九墨 Studio demo" width="320" />
+</p>
 
 ---
 

@@ -9,9 +9,9 @@
 
 Turn your music into **living ink**. Jiumo (九墨) is a browser-based, fully client-side music visualizer studio inspired by Chinese ink-wash painting — drop in an audio file, shape the ink, add lyrics and effects, preview in real time, and export straight to video. **No install, no account, nothing leaves your browser** (your audio is decoded and rendered entirely on-device).
 
-<!-- Screenshot / demo GIF: a clip of ink flowing once a track is loaded looks best.
-Once you have one: ![Jiumo Studio](docs/screenshot.png) -->
-> 📸 _Screenshot / demo GIF coming soon — load a track and let the ink flow for the best shot._
+<p align="center">
+  <img src="docs/demo.gif" alt="Jiumo Studio demo" width="320" />
+</p>
 
 ---
 
