@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #0a0809;
+}
+
+/* 歌詞/標題字體（SIL OFL，皆可商用可嵌入）的 @font-face 由 studio-client 注入（FONT_FACE_CSS），
+   字檔在 /public/fonts/。這裡只放底色與 tailwind。 */

@@ -1,0 +1,31 @@
+{
+  "name": "jiumo",
+  "version": "1.0.0",
+  "description": "九墨 — 瀏覽器內的開源水墨音樂可視化工作室（流體墨韻 + GPU 頻譜 + WebCodecs 影片輸出）",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "lucide-react": "^0.562.0",
+    "mp4-muxer": "^5.2.2",
+    "next": "16.1.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "webm-muxer": "^5.1.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
