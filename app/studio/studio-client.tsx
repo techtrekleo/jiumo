@@ -80,6 +80,9 @@ type Mutable = {
   fonts: readonly string[];
   sealOn: boolean;
   title: string;
+  lyricScale: number;        // 直式卷軸歌詞字級倍率
+  lyricStroke: boolean;      // 直式卷軸歌詞描邊
+  lyricStrokeColor: string;  // 直式卷軸歌詞描邊色
 };
 
 const fmtTime = (t: number) => {
@@ -110,6 +113,9 @@ export default function StudioClient() {
     fonts: ["Bakudai-Medium", "Bakudai-Light", "Bakudai-Light"],
     sealOn: true,
     title: "",
+    lyricScale: 1,
+    lyricStroke: false,
+    lyricStrokeColor: "#000000",
   });
   const recRef = useRef<{ rec: MediaRecorder | null; chunks: Blob[] }>({ rec: null, chunks: [] });
   const tracksRef = useRef<Track[]>([]);
@@ -138,6 +144,9 @@ export default function StudioClient() {
   const [exportOpen, setExportOpen] = useState(false);
   const [coverOpen, setCoverOpen] = useState(false); // 封面製作 overlay
   const [fontId, setFontId] = useState<LyricFontId>("modab");
+  const [lyricScale, setLyricScale] = useState(1);              // 直式卷軸歌詞字級倍率
+  const [lyricStroke, setLyricStroke] = useState(false);        // 直式卷軸歌詞描邊
+  const [lyricStrokeColor, setLyricStrokeColor] = useState("#000000"); // 描邊色
   const [sealOn, setSealOn] = useState(true);
   const [title, setTitle] = useState("");
   const [tracks, setTracks] = useState<Track[]>([]);
@@ -281,7 +290,7 @@ export default function StudioClient() {
       orientation,
       composition: compClean,
       tracks: tracks.map((t) => ({ title: t.title, lrc: t.lrc, lrcName: t.lrcName })),
-      studio: { effectId, params, palette, paperMode, fontId, sealOn, title, visualFxId, gpuFxId },
+      studio: { effectId, params, palette, paperMode, fontId, sealOn, title, visualFxId, gpuFxId, lyricScale, lyricStroke, lyricStrokeColor },
     };
     await saveProject({ id: genProjectId(), name, savedAt: Date.now(), data });
     setStatus(`已存檔：${name}`);
@@ -300,6 +309,9 @@ export default function StudioClient() {
     setPalette(d.studio.palette);
     setPaperMode(d.studio.paperMode);
     setFontId(d.studio.fontId);
+    setLyricScale(d.studio.lyricScale ?? 1);
+    setLyricStroke(d.studio.lyricStroke ?? false);
+    setLyricStrokeColor(d.studio.lyricStrokeColor ?? "#000000");
     setSealOn(d.studio.sealOn);
     setTitle(d.studio.title);
     setVisualFxId(d.studio.visualFxId);
@@ -354,6 +366,9 @@ export default function StudioClient() {
     const f = LYRIC_FONTS.find((x) => x.id === fontId) || LYRIC_FONTS[0];
     mutRef.current.fonts = f.fonts;
   }, [fontId]);
+  useEffect(() => { mutRef.current.lyricScale = lyricScale; }, [lyricScale]);
+  useEffect(() => { mutRef.current.lyricStroke = lyricStroke; }, [lyricStroke]);
+  useEffect(() => { mutRef.current.lyricStrokeColor = lyricStrokeColor; }, [lyricStrokeColor]);
   useEffect(() => { mutRef.current.sealOn = sealOn; }, [sealOn]);
   useEffect(() => { mutRef.current.title = title; }, [title]);
   useEffect(() => { tracksRef.current = tracks; }, [tracks]);
@@ -635,7 +650,7 @@ export default function StudioClient() {
       // 右側保護色塊（drawMask）只有「真的有直書歌詞要顯示」時才畫 → 沒綁 LRC 就不留空塊。
       const mainLyr = comp.find((l) => l.type === "lyrics" && l.params.lines.length === 0);
       const showScroller = !!mainLyr && isLayerActive(mainLyr, ct, dur) && scrollerRef.current.lines.length > 0;
-      if (showScroller) { drawMask(ctx2d, W, H, dark); scrollerRef.current.draw(ctx2d, W, H, time, m.fonts, !dark); }
+      if (showScroller) { drawMask(ctx2d, W, H, dark); scrollerRef.current.draw(ctx2d, W, H, time, m.fonts, !dark, { scale: m.lyricScale, stroke: m.lyricStroke, strokeColor: m.lyricStrokeColor }); }
       // 落款印章已改成「落款」圖層（drawOverlayLayers 畫），程序化 drawSeal 退役
       // 多組 LRC：有自帶 lines 的歌詞層各自畫當前句（自訂位置/字型/特效）
       drawLyricsLayers(ctx2d, comp, ct, dur, W, H);
@@ -814,7 +829,7 @@ export default function StudioClient() {
       const { chapters } = await renderOffline({
         tracks: offTracks, width: W, height: H, fps: exportFps, gap: 1.5,
         effect: m.effect, params: m.params, palette: m.palette, paperMode: m.paperMode,
-        fonts: m.fonts, sealOn: m.sealOn, fileHandle: handle, plan,
+        fonts: m.fonts, sealOn: m.sealOn, lyricStyle: { scale: m.lyricScale, stroke: m.lyricStroke, strokeColor: m.lyricStrokeColor }, fileHandle: handle, plan,
         composition: compRef.current, mediaCache: mediaCacheRef.current,
         body: b && stampCanvasRef.current ? { source: stampCanvasRef.current, koi: actorRef.current instanceof InkKoiActor, ...b } : undefined,
         onProgress: (d, tot) => setRenderPct(Math.min(99, Math.round((d / tot) * 100))),
@@ -1069,6 +1084,32 @@ export default function StudioClient() {
                 >
                   {LYRIC_FONTS.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}
                 </select>
+              </div>
+              {/* 直式卷軸歌詞的字級 + 描邊（橫式字幕走 transform/特效；直式沒 transform → 在這裡調） */}
+              <div>
+                <label className="text-[11px] text-white/40 tracking-wider flex justify-between">
+                  <span>字級</span><span className="text-white/65">{Math.round(lyricScale * 100)}%</span>
+                </label>
+                <input type="range" min={0.6} max={2} step={0.05} value={lyricScale}
+                  onChange={(e) => setLyricScale(parseFloat(e.target.value))} className="w-full accent-red-400" />
+                <p className="text-[10px] text-white/30 leading-relaxed mt-1">直式卷軸歌詞字的大小（放大會自動夾在畫面內、不溢出）。</p>
+              </div>
+              <div>
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] text-white/40 tracking-wider">描邊</label>
+                  <button type="button" onClick={() => setLyricStroke((v) => !v)}
+                    className={`px-3 py-1 rounded-lg text-[12px] border transition ${lyricStroke ? "bg-red-400/20 border-red-400/50 text-white" : "bg-black/30 border-white/10 text-white/55 hover:text-white/80"}`}>
+                    {lyricStroke ? "開" : "關"}
+                  </button>
+                </div>
+                {lyricStroke && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-[10px] text-white/40">描邊色</span>
+                    <input type="color" value={lyricStrokeColor} onChange={(e) => setLyricStrokeColor(e.target.value)}
+                      className="w-8 h-8 rounded bg-transparent border border-white/15 cursor-pointer p-0" />
+                    <span className="text-[10px] text-white/30 leading-relaxed flex-1">淺色背景配深描邊、深色背景配白描邊最清楚。</span>
+                  </div>
+                )}
               </div>
               <p className="text-[10px] text-white/30 leading-relaxed">落款印章與歌名顯示已改成圖層：左欄選「落款」可改印章文字/拖位置、選「歌名」文字層打歌名。</p>
             </div>

@@ -748,9 +748,12 @@ export function drawAlphaLayer(
 
 // 疊加層：圖片 Logo / 影片 / 文字 / 落款 / CTA，依 z 序（陣列順序）畫在最上。位置=transform 中心比例，大小=scale。
 //   （控制板已抽成 drawPlayerLayer，由渲染迴圈跟特效交錯畫 → 此處不再畫 player）
+// offVideos：離線渲染專用。呼叫端已把每個在場影片「逐幀 seek」好、放進這個 map（key=layer.id）。
+//   給了就用 map 裡的元素同步畫影片（照 z 序內嵌、不再另外抽出去畫最上）；不給=即時預覽，用 syncVideo 跟播放對齊。
 export function drawOverlayLayers(
   ctx: CanvasRenderingContext2D, comp: Composition, cache: MediaCache,
-  t: number, duration: number, W: number, H: number, playing = false, skipVideo = false,
+  t: number, duration: number, W: number, H: number, playing = false,
+  offVideos?: Map<string, HTMLVideoElement> | null,
 ) {
   // 自動讓位：場上只要有「可見、在時段內、有字」的自訂落款，品牌章就隱藏（換成使用者自己的章）。
   const hasCustomSeal = comp.some(
@@ -759,7 +762,6 @@ export function drawOverlayLayers(
   );
   for (const layer of comp) {
     if (layer.type !== "image" && layer.type !== "video" && layer.type !== "text" && layer.type !== "seal" && layer.type !== "cta") continue;
-    if (layer.type === "video" && skipVideo) continue; // 離線渲染另用 seek 方式畫影片
     if (!isLayerActive(layer, t, duration)) continue;
     const tf = layer.transform ?? { x: 0.5, y: 0.5, scale: 1 };
     const cx = tf.x * W, cy = tf.y * H;
@@ -777,7 +779,8 @@ export function drawOverlayLayers(
     } else if (layer.type === "video") {
       if (!layer.params.src) continue;
       const startSec = layer.timing?.start ?? 0; // 片頭通常 start=0，跟著時間軸對齊
-      const vid = syncVideo(cache, layer.id, layer.params.src, layer.params.loop, startSec, t, playing);
+      // 離線：用呼叫端已 seek 好的元素（同步畫）；即時預覽：syncVideo 跟播放對齊。兩條都走同一段 z 序內嵌繪製。
+      const vid = offVideos ? (offVideos.get(layer.id) ?? null) : syncVideo(cache, layer.id, layer.params.src, layer.params.loop, startSec, t, playing);
       if (!vid || vid.videoWidth === 0) continue;
       const vt = t - startSec;
       if (vt < 0) continue; // 還沒輪到它出現

@@ -8,7 +8,7 @@ import { Muxer as WebMMuxer, StreamTarget as WebMStreamTarget } from "webm-muxer
 import { FluidCore } from "./fluid-core";
 import { GpuVisuals, INK_GPU_IDS } from "./gpu-visuals";
 import { BgFx } from "./bg-fx";
-import { LyricScroller, type LyricLine } from "./lyrics";
+import { LyricScroller, type LyricLine, type LyricScrollStyle } from "./lyrics";
 import type { AudioFrame } from "./audio";
 import { EFFECTS, resetInkState, type InkEffect, type ParamValues } from "./effects";
 import { PAPER_COLORS, autoPalette, hexToRgb, type Palette, type PaperMode } from "./palette";
@@ -36,6 +36,7 @@ export type OfflineOptions = {
   paperMode: PaperMode;
   fonts: readonly string[];
   sealOn: boolean;
+  lyricStyle?: LyricScrollStyle; // 直式卷軸歌詞字級/描邊（跟即時預覽對齊，沒給=原樣）
   composition: Composition; //  完整圖層樹：背景圖+濾鏡 / 音訊圖 / 疊加層 / 落款，跟即時預覽對齊
   mediaCache: MediaCache; //    已載入的背景圖 / Logo / 落款圖（dataURL）
   fileHandle: FileSystemFileHandle;
@@ -592,13 +593,12 @@ export async function renderOffline(opts: OfflineOptions): Promise<{ chapters: s
     const mainLyr = fcomp.find((l) => l.type === "lyrics" && l.params.lines.length === 0);
     if (mainLyr && isLayerActive(mainLyr, localT, localDur) && scroller.lines.length > 0) {
       drawMask(ctx2d, width, height, dark);
-      scroller.draw(ctx2d, width, height, nowMs, opts.fonts, !dark);
+      scroller.draw(ctx2d, width, height, nowMs, opts.fonts, !dark, opts.lyricStyle);
     }
-    // ── 多組字幕 → 疊加素材（圖片/文字/落款；影片在下方另用 seek 解碼畫）
-    drawLyricsLayers(ctx2d, fcomp, localT, localDur, width, height);
-    drawOverlayLayers(ctx2d, fcomp, cache, localT, localDur, width, height, false, true);
-
-    // ── 影片層：逐幀 seek 到對應時間點再畫（片頭全螢幕／角落小窗），畫最上、跟即時預覽一致
+    // ── 影片：先逐幀 seek 到對應時間點（async），存進 frameVideos，再交給 drawOverlayLayers 照 z 序內嵌畫。
+    //    （修：原本影片被抽出、在所有疊加層之後單獨畫＝永遠蓋最上 → 比影片高 z 的 CTA／落款／文字會被影片蓋掉，
+    //      預覽正常但匯出出包。改成把 seek 好的元素傳進 drawOverlayLayers，跟即時預覽走同一套 z 序。）
+    const frameVideos = new Map<string, HTMLVideoElement>();
     for (const l of fcomp) {
       if (l.type !== "video" || !l.params.src || !isLayerActive(l, localT, localDur)) continue;
       const v = offlineVideos.get(l.id);
@@ -612,21 +612,12 @@ export async function renderOffline(opts: OfflineOptions): Promise<{ chapters: s
       const ended = !l.params.loop && vt > dur2;
       if (ended && l.params.mode === "intro") continue; // 片頭播完 → 露出主視覺
       await seekOfflineVideo(v, Math.max(0, Math.min(dur2 - 0.001, vt)));
-      ctx2d.save();
-      if (l.params.blend === "screen") ctx2d.globalCompositeOperation = "screen";
-      if (l.params.mode === "intro") {
-        const tf = l.transform;
-        const k = Math.max(width / v.videoWidth, height / v.videoHeight) * (tf?.scale ?? 1); // cover × scale
-        const w = v.videoWidth * k, h = v.videoHeight * k;
-        const cx = (tf?.x ?? 0.5) * width, cy = (tf?.y ?? 0.5) * height;
-        ctx2d.drawImage(v, cx - w / 2, cy - h / 2, w, h);
-      } else {
-        const tf = l.transform;
-        const dw = (tf?.scale ?? 1) * width, dh = dw * (v.videoHeight / v.videoWidth);
-        ctx2d.drawImage(v, (tf?.x ?? 0.5) * width - dw / 2, (tf?.y ?? 0.5) * height - dh / 2, dw, dh);
-      }
-      ctx2d.restore();
+      frameVideos.set(l.id, v);
     }
+
+    // ── 多組字幕 → 疊加素材（圖片/影片/文字/落款/CTA）依 z 序畫，跟即時預覽一致
+    drawLyricsLayers(ctx2d, fcomp, localT, localDur, width, height);
+    drawOverlayLayers(ctx2d, fcomp, cache, localT, localDur, width, height, false, frameVideos);
 
     const vf = new VideoFrame(stage, {
       timestamp: Math.round((i / fps) * 1e6), // 0-based 輸出時間（裁切時與音訊對齊）

@@ -72,6 +72,14 @@ export type LyricFontId = (typeof LYRIC_FONTS)[number]["id"];
 
 const ease = (t: number) => 1 - Math.pow(1 - t, 3);
 
+// 直書卷軸的可調樣式（左欄「歌詞」設定）。橫式字幕走 transform.scale + textEffects；
+// 直式卷軸沒有 transform → 字級/描邊在這裡給對應旋鈕，讓直式也能調（與橫式對齊）。
+export interface LyricScrollStyle {
+  scale?: number;       // 字級倍率（1 = 原本大小）
+  stroke?: boolean;     // 描邊開關
+  strokeColor?: string; // 描邊色（預設黑；淺色背景可改白，深字才描得出來）
+}
+
 // 卷軸狀態：保留最近三句、換句時做位移/淡入動畫
 export class LyricScroller {
   lines: LyricLine[] = [];
@@ -121,9 +129,12 @@ export class LyricScroller {
     return true;
   }
 
-  // 直書卷軸繪製（深字給宣紙、亮字給夜紙）
-  draw(ctx: CanvasRenderingContext2D, W: number, H: number, now: number, fonts: readonly string[], dark: boolean) {
+  // 直書卷軸繪製（深字給宣紙、亮字給夜紙）。style＝左欄歌詞設定：字級倍率 + 描邊（直式也能調，與橫式字幕對齊）。
+  draw(ctx: CanvasRenderingContext2D, W: number, H: number, now: number, fonts: readonly string[], dark: boolean, style?: LyricScrollStyle) {
     if (!this.display.length) return;
+    const scale = Math.max(0.4, style?.scale ?? 1);       // 字級倍率
+    const strokeOn = !!style?.stroke;                     // 描邊開關
+    const strokeColor = style?.strokeColor || "rgba(0,0,0,0.85)";
     const isPortrait = H > W;
     const slotX = isPortrait ? [0.8, 0.62, 0.47] : [0.875, 0.79, 0.72];
     const slotSize = isPortrait ? [W * 0.075, W * 0.05, W * 0.042] : [H * 0.052, H * 0.034, H * 0.029];
@@ -133,9 +144,9 @@ export class LyricScroller {
     const k = ease(t);
     for (let s = this.display.length - 1; s >= 0; s--) {
       const text = this.display[s];
-      let size = slotSize[s];
+      let size = slotSize[s] * scale;                     // 套字級倍率
       const maxH = H * 0.74;
-      if (text.length * size * 1.16 > maxH) size = maxH / (text.length * 1.16);
+      if (text.length * size * 1.16 > maxH) size = maxH / (text.length * 1.16); // 仍夾在畫面內、放大不溢出
       let x = slotX[s] * W;
       let alpha = slotAlpha[s];
       if (s === 0) {
@@ -155,7 +166,12 @@ export class LyricScroller {
       ctx.fillStyle = color;
       ctx.globalAlpha = alpha;
       const step = size * 1.16;
-      for (let i = 0; i < text.length; i++) ctx.fillText(text[i], x, yTop + i * step);
+      if (strokeOn) { ctx.strokeStyle = strokeColor; ctx.lineWidth = Math.max(2, size * 0.08); ctx.lineJoin = "round"; } // 描邊（fill 前 stroke＝外緣描邊，與橫式字幕一致）
+      for (let i = 0; i < text.length; i++) {
+        const yy = yTop + i * step;
+        if (strokeOn) ctx.strokeText(text[i], x, yy);
+        ctx.fillText(text[i], x, yy);
+      }
       ctx.restore();
     }
   }

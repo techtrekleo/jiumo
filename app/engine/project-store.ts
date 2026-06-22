@@ -21,6 +21,9 @@ export type ProjectData = {
     title: string;
     visualFxId: string | null;
     gpuFxId?: string | null; // GPU 光效（shader）選中 id；舊存檔沒有 → optional
+    lyricScale?: number;       // 直式卷軸歌詞字級倍率（舊存檔沒有 → 預設 1）
+    lyricStroke?: boolean;     // 直式卷軸歌詞描邊開關（舊存檔沒有 → 預設 false）
+    lyricStrokeColor?: string; // 直式卷軸歌詞描邊色（舊存檔沒有 → 預設黑）
   };
 };
 
