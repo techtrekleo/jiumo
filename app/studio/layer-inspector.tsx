@@ -382,13 +382,24 @@ export function LayerInspector({ layer, duration, onPatchParams, onPatchTransfor
         return (
           <div className="space-y-2">
             <div className="flex gap-1.5">
-              {[{ id: "brand", label: "品牌（九墨）" }, { id: "custom", label: "自訂落款" }].map((m) => (
+              {[{ id: "brand", label: "品牌章" }, { id: "custom", label: "自訂落款" }].map((m) => (
                 <button key={m.id} type="button" onClick={() => onPatchParams(layer.id, { mode: m.id })}
                   className={`flex-1 text-[11px] rounded px-1 py-1 border transition ${mode === m.id ? "border-white/45 text-white" : "border-white/15 text-white/55 hover:border-white/35"}`}>{m.label}</button>
               ))}
             </div>
             {mode === "brand" ? (
-              <p className="text-[11px] text-white/45 leading-relaxed">「九墨」品牌落款，內容固定不可改。場上一旦有自訂落款，這枚會自動隱藏（刪掉自訂落款即恢復）。</p>
+              <>
+                <div className="flex gap-1.5">
+                  {[{ id: "jiumo", label: "九墨" }, { id: "jiuliyue", label: "九黎月" }].map((b) => {
+                    const on = ((p.brandId as string) ?? "jiumo") === b.id;
+                    return (
+                      <button key={b.id} type="button" onClick={() => onPatchParams(layer.id, { brandId: b.id })}
+                        className={`flex-1 text-[11px] rounded px-1 py-1 border transition ${on ? "border-white/45 text-white" : "border-white/15 text-white/55 hover:border-white/35"}`}>{b.label}</button>
+                    );
+                  })}
+                </div>
+                <p className="text-[11px] text-white/45 leading-relaxed">品牌落款，內容固定不可改（劍豪體烤進圖）。場上一旦有自訂落款，這枚會自動隱藏（刪掉自訂落款即恢復）。</p>
+              </>
             ) : (
               <>
                 <p className="text-[11px] text-white/45 leading-relaxed">刻你自己的章。直書印文（建議姓名／字號 1～4 字），顯示時內建「九墨」落款會自動隱藏。</p>

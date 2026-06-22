@@ -227,12 +227,13 @@ export interface ImageParams {
 }
 
 // 落款印章。兩種模式：
-//   brand  ＝固定的「九墨」品牌印章圖（劍豪體烤進 PNG /seal-jiumo.png，不外送字體檔、內容鎖定）。
+//   brand  ＝固定品牌印章圖（劍豪體烤進 PNG，不外送字體檔、內容鎖定）。brandId 選哪枚：九墨 /seal-jiumo.png、九黎月 /seal-jiuliyue.png。
 //   custom ＝使用者自訂落款：直書印文 + 站上自帶字型（皆 SIL OFL 可嵌入，不含授權禁嵌的劍豪體）+ 印泥色。
 // 只要場上有「可見且有字」的 custom 落款，brand 落款會自動隱藏（讓位給使用者自己的章）。
 // 位置/大小走共用 transform，開關/刪除走圖層樹。
 export interface SealParams {
-  mode: "brand" | "custom"; // brand=九墨品牌章（固定）；custom=自訂直書落款
+  mode: "brand" | "custom"; //          brand=固定品牌章；custom=自訂直書落款
+  brandId?: "jiumo" | "jiuliyue"; //    brand 時選哪枚品牌章（內容鎖定、不可改）；舊存檔沒有 → 預設 jiumo
   text: string; //            custom：直書印文（建議姓名/字號 1–4 字）
   fontId: LyricFontId; //     custom：印文字型（站上自帶 woff2，無劍豪體）
   sealColor: string; //       custom：印泥底色（預設硃砂紅）

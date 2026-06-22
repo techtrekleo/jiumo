@@ -811,9 +811,10 @@ export function drawOverlayLayers(
         // 使用者自訂落款：直書印文 + 站上自帶字型（授權乾淨，不碰劍豪體）。
         drawCustomSeal(ctx, sp.text, sp.fontId, sp.sealColor, sp.textColor, sp.opacity, cx, cy, W, H, tf.scale);
       } else {
-        // 「九墨」品牌印章圖（劍豪體已烤進 PNG，不外送字體檔）。場上有自訂落款時自動讓位。
+        // 品牌印章圖（劍豪體已烤進 PNG，不外送字體檔、內容鎖定）。brandId 選九墨 / 九黎月。場上有自訂落款時自動讓位。
         if (hasCustomSeal) continue;
-        const img = getImage(cache, layer.id, "/seal-jiumo.png?v=2");
+        const brandSrc = (sp.brandId ?? "jiumo") === "jiuliyue" ? "/seal-jiuliyue.png?v=1" : "/seal-jiumo.png?v=2";
+        const img = getImage(cache, layer.id, brandSrc);
         if (!img || img.naturalWidth === 0) continue;
         const dh = Math.min(W, H) * 0.21 * tf.scale; // 圖含全形上下空格較高 → 提高渲染高度讓字維持大小
         const dw = dh * (img.naturalWidth / img.naturalHeight);
