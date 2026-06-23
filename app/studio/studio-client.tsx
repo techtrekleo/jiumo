@@ -830,6 +830,9 @@ export default function StudioClient() {
       const m = mutRef.current;
       setStatus("離線渲染中、切走分頁也照跑");
       const b = bodyRef.current;
+      // 匯出前確保所有字體都載入完成：離線渲染逐幀畫，若大字體（如思源黑 8MB）還沒載完就開渲染，
+      // 那幾幀的歌詞/歌名/落款會掉成系統字。等的是 mount 時就在預載的那批，通常已 ready、不會多下載。
+      try { await Promise.all(LYRIC_FONTS.map((f) => document.fonts.load(`32px '${f.fonts[0]}'`))); await document.fonts.ready; } catch { /* 載入失敗就用 fallback，不擋匯出 */ }
       const { chapters } = await renderOffline({
         tracks: offTracks, width: W, height: H, fps: exportFps, gap: 1.5,
         effect: m.effect, params: m.params, palette: m.palette, paperMode: m.paperMode,
