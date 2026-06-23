@@ -61,7 +61,11 @@ export const LYRIC_FONTS = [
   { id: "jason", label: "清松手寫", fonts: ["JasonHW", "JasonHW", "JasonHW"] }, //          游清松手寫。SIL OFL（可商用可嵌入）
   { id: "gensen", label: "源泉圓體", fonts: ["GenSenRounded", "GenSenRounded", "GenSenRounded"] }, // 圓潤現代。SIL OFL 1.1（可商用可嵌入）
   { id: "song", label: "思源宋體", fonts: ["NotoSerifTC-Medium", "NotoSerifTC-Medium", "NotoSerifTC-Medium"] }, // 典雅宋。SIL OFL（可商用可嵌入）
+  { id: "hei", label: "思源黑體", fonts: ["NotoSansTC-Medium", "NotoSansTC-Medium", "NotoSansTC-Medium"] }, // 全字庫黑體。SIL OFL 1.1（可商用可嵌入，© Adobe/Source Han Sans）
+  { id: "taipei", label: "台北黑體", fonts: ["TaipeiSansTC", "TaipeiSansTC", "TaipeiSansTC"] }, // 現代黑、繁中全。SIL OFL 1.1（思源黑改作）
+  { id: "genryu", label: "源流明體", fonts: ["GenRyuMin", "GenRyuMin", "GenRyuMin"] }, // 全字庫明體。SIL OFL 1.1（思源宋＋全字庫）
   { id: "kai", label: "霞鶩文楷", fonts: ["LXGWWenKaiTC-Medium", "LXGWWenKaiTC-Medium", "LXGWWenKaiTC-Medium"] }, // 端正楷。SIL OFL（可商用可嵌入）
+  { id: "chenyu", label: "辰宇落雁", fonts: ["ChenYuLuoYan", "ChenYuLuoYan", "ChenYuLuoYan"] }, // 細手寫。SIL OFL 1.1（可商用可嵌入，保留字型名「辰宇落雁」）
   // 英文厚體（Google Fonts，皆 SIL OFL 可商用可嵌入）。中文字會 fallback 思源宋體。
   { id: "anton", label: "Anton 厚壓縮", fonts: ["Anton", "Anton", "Anton"] }, //          超粗壓縮，標題霸氣
   { id: "archivo", label: "Archivo 黑體", fonts: ["ArchivoBlack", "ArchivoBlack", "ArchivoBlack"] }, // 厚實黑體

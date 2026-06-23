@@ -62,6 +62,10 @@ const FONT_FACE_CSS = `
 @font-face { font-family: 'Anton'; src: url('/fonts/Anton.woff2') format('woff2'); font-display: swap; }
 @font-face { font-family: 'ArchivoBlack'; src: url('/fonts/ArchivoBlack.woff2') format('woff2'); font-display: swap; }
 @font-face { font-family: 'BebasNeue'; src: url('/fonts/BebasNeue.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'ChenYuLuoYan'; src: url('/fonts/ChenYuLuoYan.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'NotoSansTC-Medium'; src: url('/fonts/NotoSansTC-Medium.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'TaipeiSansTC'; src: url('/fonts/TaipeiSansTC.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'GenRyuMin'; src: url('/fonts/GenRyuMin.woff2') format('woff2'); font-display: swap; }
 `;
 
 const BTN =
@@ -479,7 +483,7 @@ export default function StudioClient() {
     void document.fonts.load("32px 'Bakudai-Medium'");
     void document.fonts.load("32px 'Bakudai-Light'");
     // 預載所有字體選項（canvas 要字體 ready 才畫得出來，否則退回系統字）
-    for (const f of ["GenSenRounded", "JasonHW", "NotoSerifTC-Medium", "LXGWWenKaiTC-Medium", "Anton", "ArchivoBlack", "BebasNeue"]) void document.fonts.load(`32px '${f}'`);
+    for (const f of ["GenSenRounded", "JasonHW", "NotoSerifTC-Medium", "LXGWWenKaiTC-Medium", "ChenYuLuoYan", "NotoSansTC-Medium", "TaipeiSansTC", "GenRyuMin", "Anton", "ArchivoBlack", "BebasNeue"]) void document.fonts.load(`32px '${f}'`);
 
     let raf = 0;
     let last = performance.now();

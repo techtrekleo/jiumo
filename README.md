@@ -63,7 +63,7 @@ Needs a browser with **WebGL2** and **WebCodecs** (Chrome / Edge / recent Safari
 
 ## 🔤 Fonts
 
-The fonts bundled in `public/fonts/` are all under the **SIL Open Font License** (free for commercial use and embedding): Bakudai, JasonHW (游清松手寫), GenSen Rounded, Noto Serif TC, LXGW WenKai TC, plus Anton / Archivo Black / Bebas Neue.
+The fonts bundled in `public/fonts/` are all under the **SIL Open Font License** (free for commercial use and embedding): Bakudai, JasonHW (游清松手寫), GenSen Rounded, Noto Serif TC, Noto Sans CJK TC (思源黑體, © Adobe), Taipei Sans TC (台北黑體, a modification of Source Han Sans), GenRyuMin (源流明體, © ButTaiwan — see `public/fonts/GenRyuMin-OFL.txt`), LXGW WenKai TC, ChenYuLuoYan (辰宇落雁體, © 2022 Wang Li-Yu & Liu Wei-Chen — see `public/fonts/ChenYuluoyan-OFL.txt`), plus Anton / Archivo Black / Bebas Neue.
 
 ## 🐟 Help wanted: more ink creatures (the *living* kind!)
 

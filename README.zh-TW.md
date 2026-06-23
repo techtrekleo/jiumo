@@ -61,7 +61,7 @@ npm run dev
 
 ## 🔤 字體
 
-`public/fonts/` 內附的字體皆為 **SIL Open Font License**（可商用、可嵌入）：莫大毛筆、游清松手寫、源泉圓體、思源宋體、霞鶩文楷，以及 Anton / Archivo Black / Bebas Neue。
+`public/fonts/` 內附的字體皆為 **SIL Open Font License**（可商用、可嵌入）：莫大毛筆、游清松手寫、源泉圓體、思源宋體、思源黑體（Noto Sans CJK TC，© Adobe）、台北黑體（Taipei Sans TC，思源黑改作）、源流明體（GenRyuMin，© ButTaiwan，授權見 `public/fonts/GenRyuMin-OFL.txt`）、霞鶩文楷、辰宇落雁體（© 2022 王立宇／劉韋辰，授權見 `public/fonts/ChenYuluoyan-OFL.txt`），以及 Anton / Archivo Black / Bebas Neue。
 
 ## 🐟 拜託幫我做更多墨生物（會動的那種！）
 
